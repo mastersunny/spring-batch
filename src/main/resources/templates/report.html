@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en"
+      xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Template</title>
+    <style type="text/css">
+        body {
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            font-size: 14px;
+            font-family: arial, sans-serif;
+        }
+
+        p {
+            text-align: left;
+        }
+
+        .container {
+            padding: 30px 15px;
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        td, th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+            font-size: 14px;
+        }
+
+        thead tr th {
+        }
+
+        table tr td:last-child {
+            text-align: right;
+        }
+
+        tr:nth-child(even) {
+            background-color: rgba(221, 221, 221, 0.35);
+        }
+
+        .footer {
+            margin-top: 90px;
+            line-height: 26px;
+        }
+
+        .d-flex {
+            display: block;
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .col {
+            text-align: left;
+            float: left;
+            display: block;
+        }
+
+        .col.w-68 {
+            width: 68%;
+        }
+
+        .col.w-28 {
+            width: 28%;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <p><b>Attachment:</b> National Credit and Commerce Bank Limited</p>
+
+    <table>
+        <thead>
+        <tr>
+            <th>SL No.</th>
+            <th>Ref. No.</th>
+            <th>Bank Account Name</th>
+            <th>Bank Account Number</th>
+            <th>Amount in Taka</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="report : ${reports}">
+            <td th:text="${report.id}"></td>
+            <td th:text="${report.id}"></td>
+            <td th:text="${report.accountName}"></td>
+            <td th:text="${report.accountNo}"></td>
+            <td th:text="${report.refundAmount}"></td>
+        </tr>
+        ​<!-- Prototype demo content -->
+        <tr th:remove="all">
+            <th>1</th>
+            <td>405</td>
+            <td>TALUKDER TELECOM</td>
+            <td>064-0210014209</td>
+            <td>3,500,000.00</td>
+        </tr>
+        <tr th:remove="all">
+            <th>2</th>
+            <td>407</td>
+            <td>TALUKDER TELECOM</td>
+            <td>064-0210014209</td>
+            <td>3,500,000.00</td>
+        </tr>
+        <tr th:remove="all">
+            <th>3</th>
+            <td>405</td>
+            <td>TALUKDER TELECOM</td>
+            <td>064-0210014209</td>
+            <td>3,500,000.00</td>
+        </tr>
+        <tr th:remove="all">
+            <th>4</th>
+            <td>407</td>
+            <td>TALUKDER TELECOM</td>
+            <td>064-0210014209</td>
+            <td>3,500,000.00</td>
+        </tr>
+        </tbody>
+        <tfoot>
+        <tr>
+            <td>Total</td>
+            <td colspan="3" th:text="${grandTotalWord}"></td>
+            <td th:text="${grandTotal}"></td>
+        </tr>
+        </tfoot>
+
+    </table>
+
+    <div class="footer">
+        <div class="d-flex">
+            <div class="col w-68">
+                <div>Adnan Mehdi</div>
+                <div>Head of Treasury</div>
+                <div>bKash Ltd.</div>
+
+            </div>
+            <div class="col w-28">
+                <div>Moinuddin Mohammed Rahgir</div>
+                <div>Chief Financial Officer</div>
+                <div>bKash Ltd.</div>
+            </div>
+        </div>
+        <p class="text-center">Page 1 of 1</p>
+    </div>
+</div>
+
+</body>
+</html>
