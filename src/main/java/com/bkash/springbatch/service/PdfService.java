@@ -20,16 +20,19 @@ import java.util.List;
 @Service
 public class PdfService {
 
-    private ReportRepository reportRepository;
+    ReportRepository reportRepository;
 
     @Autowired
     SpringTemplateEngine templateEngine;
 
-    public PdfService(ReportRepository reportRepository) {
+    ITextRenderer renderer;
+
+    public PdfService(ReportRepository reportRepository, ITextRenderer renderer) {
         this.reportRepository = reportRepository;
+        this.renderer = renderer;
     }
 
-    public Report generatePdf()throws IOException, DocumentException {
+    public Report generatePdf(){
         Context context = new Context();
 
         List<Report> reports = reportRepository.findByBankName("THE CITY BANK LTD.");
@@ -43,25 +46,35 @@ public class PdfService {
         context.setVariable("grandTotalWord", NumberToSpelling
                 .generateBalanceInWord((new DecimalFormat("#.00").format(grandTotal))));
 
-        String htmlContentToRender = templateEngine.process("report", context);
-        String xHtml = xhtmlConvert(htmlContentToRender);
+        generatePdf(context, "report", "report");
 
-        ITextRenderer renderer = new ITextRenderer();
 
-        String baseUrl = FileSystems
-                .getDefault()
-                .getPath("src", "main", "resources","templates")
-                .toUri()
-                .toURL()
-                .toString();
-        renderer.setDocumentFromString(xHtml, baseUrl);
-        renderer.layout();
+        generatePdf(context, "application", "application");
 
-        OutputStream outputStream = new FileOutputStream("src//report.pdf");
-        renderer.createPDF(outputStream);
-        outputStream.close();
 
         return new Report();
+    }
+
+    private void generatePdf(Context context, String inputFileName, String outputFileName){
+       try{
+           String htmlContentToRender = templateEngine.process(inputFileName, context);
+           String xHtml = xhtmlConvert(htmlContentToRender);
+
+           String baseUrl = FileSystems
+                   .getDefault()
+                   .getPath("src", "main", "resources","templates")
+                   .toUri()
+                   .toURL()
+                   .toString();
+           renderer.setDocumentFromString(xHtml, baseUrl);
+           renderer.layout();
+
+           OutputStream outputStream = new FileOutputStream("src//"+outputFileName+".pdf");
+           renderer.createPDF(outputStream);
+           outputStream.close();
+       }catch (Exception e){
+           e.printStackTrace();
+       }
     }
 
     private BigDecimal calculateGrandTotal(List<Report> reports) {

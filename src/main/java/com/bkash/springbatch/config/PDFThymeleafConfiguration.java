@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.templatemode.StandardTemplateModeHandlers;
+import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import java.nio.charset.StandardCharsets;
 
@@ -26,5 +27,10 @@ public class PDFThymeleafConfiguration {
         pdfTemplateResolver.setTemplateMode(StandardTemplateModeHandlers.HTML5.getTemplateModeName());
         pdfTemplateResolver.setCharacterEncoding(StandardCharsets.UTF_8.name());
         return pdfTemplateResolver;
+    }
+
+    @Bean
+    public ITextRenderer iTextRenderer(){
+        return new ITextRenderer();
     }
 }
