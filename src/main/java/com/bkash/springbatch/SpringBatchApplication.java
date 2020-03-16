@@ -18,9 +18,6 @@ public class SpringBatchApplication {
 	@Autowired
 	JobLauncher jobLauncher;
 
-	@Autowired
-	Job job;
-
 	public static void main(String[] args) {
 		SpringApplication.run(SpringBatchApplication.class, args);
 	}
