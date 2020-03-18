@@ -7,6 +7,7 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.batch.item.file.FlatFileItemReader;
@@ -16,6 +17,7 @@ import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
@@ -48,21 +50,21 @@ public class BatchConfig {
 //    }
 
     @Bean
-    public Job readCSVFileJob(){
+    public Job readCSVFileJob(Step step){
         Job job =  jobBuilderFactory.get("processCpsFileJob")
                 .incrementer(new RunIdIncrementer())
                 .listener(listener)
-                .flow(step())
+                .flow(step)
                 .end()
                 .build();
         return job;
     }
 
     @Bean
-    public Step step(){
+    public Step step(MultiResourceItemReader multiResourceItemReader){
         Step step =  stepBuilderFactory.get("processCpsFileStep")
                 .<Report, Report> chunk(3)
-                .reader(multiResourceItemReader())
+                .reader(multiResourceItemReader)
 //                .processor(processor())
                 .writer(writer())
                 .build();
@@ -70,10 +72,10 @@ public class BatchConfig {
     }
 
     @Bean
-    public MultiResourceItemReader multiResourceItemReader(){
+    public MultiResourceItemReader multiResourceItemReader(FlatFileItemReader flatFileItemReader){
         Resource[] resources = {};
         MultiResourceItemReader<Report> multiResourceItemReader = new MultiResourceItemReaderBuilder<Report>()
-                .delegate(reader())
+                .delegate(flatFileItemReader)
                 .resources(resources)
                 .name("reportReader")
                 .build();
@@ -81,27 +83,19 @@ public class BatchConfig {
     }
 
     @Bean
-    public FlatFileItemReader<Report> reader() {
-        //Create reader instance
+    @StepScope
+    public FlatFileItemReader<Report> reader(@Value("#{jobParameters['columnNames']}") String columnNames) {
         FlatFileItemReader<Report> reader = new FlatFileItemReader<>();
-
-        //Set input file location
-        reader.setResource(new ClassPathResource("Report_EFT_800000000101006545_1_20190728122021.csv"));
-
-        //Set number of lines to skips. Use it if file has header rows.
         reader.setLinesToSkip(1);
-
-        //Configure how each line will be parsed and mapped to different values
         reader.setLineMapper(new DefaultLineMapper<Report>() {
             {
-                //3 columns in each row
                 setLineTokenizer(new DelimitedLineTokenizer() {
                     {
-                        setNames(new String[] {"RefundAmount", "BankName", "AccountNo", "AccountName"});
+//                        setNames(new String[] {"RefundAmount", "BankName", "AccountNo", "AccountName"});
+                        setNames(columnNames.split(","));
                         setIncludedFields(new int[]{9,11,15,16});
                     }
                 });
-                //Set values in Employee class
                 setFieldSetMapper(new BeanWrapperFieldSetMapper() {
                     {
                         setTargetType(Report.class);
