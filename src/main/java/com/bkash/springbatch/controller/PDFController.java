@@ -37,18 +37,10 @@ public class PDFController {
     PdfService pdfService;
 
     @Autowired
-    private JobBuilderFactory jobBuilderFactory;
+    Job job;
 
     @Autowired
-    private StepBuilderFactory stepBuilderFactory;
-
-    @Autowired
-    JpaItemWriter writer;
-
-    @Autowired
-    JobCompletionNotificationListener listener;
-
-
+    MultiResourceItemReader multiResourceItemReader;
 
     @Autowired
     public PDFController(JobLauncher jobLauncher, PdfService pdfService) {
@@ -58,28 +50,7 @@ public class PDFController {
 
     @RequestMapping("/generatePdf")
     public @ResponseBody Report savePDF() throws Exception {
-
-
-        MultiResourceItemReader<Report> reportMultiResourceItemReader = new MultiResourceItemReaderBuilder<Report>()
-                .delegate(reader())
-                .resources(getResources())
-                .name("reportReader")
-                .build();
-
-       Step step =  stepBuilderFactory.get("processCpsFileStep")
-                .<Report, Report> chunk(3)
-                .reader(reportMultiResourceItemReader)
-//                .processor(processor())
-                .writer(writer)
-                .build();
-
-       Job job =  jobBuilderFactory.get("processCpsFileJob")
-                .incrementer(new RunIdIncrementer())
-                .listener(listener)
-                .flow(step)
-                .end()
-                .build();
-
+        multiResourceItemReader.setResources(getResources());
 
         JobParameters params2 = new JobParametersBuilder()
                 .addString("JobID", String.valueOf(System.currentTimeMillis()))
@@ -95,38 +66,6 @@ public class PDFController {
         return resources;
     }
 
-
-    public FlatFileItemReader<Report> reader()
-    {
-        //Create reader instance
-        FlatFileItemReader<Report> reader = new FlatFileItemReader<>();
-
-        //Set input file location
-//        reader.setResource(new ClassPathResource("Report_EFT_800000000101006545_1_20190728122021.csv"));
-
-        //Set number of lines to skips. Use it if file has header rows.
-        reader.setLinesToSkip(1);
-
-        //Configure how each line will be parsed and mapped to different values
-        reader.setLineMapper(new DefaultLineMapper<Report>() {
-            {
-                //3 columns in each row
-                setLineTokenizer(new DelimitedLineTokenizer() {
-                    {
-                        setNames(new String[] {"RefundAmount", "BankName", "AccountNo", "AccountName"});
-//                        setIncludedFields(new int[]{9,11,15,16});
-                    }
-                });
-                //Set values in Employee class
-//                setFieldSetMapper(new BeanWrapperFieldSetMapper() {
-//                    {
-//                        setTargetType(Report.class);
-//                    }
-//                });
-            }
-        });
-        return reader;
-    }
 
 
 
