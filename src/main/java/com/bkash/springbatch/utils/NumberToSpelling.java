@@ -28,11 +28,6 @@ public class NumberToSpelling {
         return getFullDateRangeOfMonth(dateInString);
     }
 
-    public static String generateClosingBalanceInWord(String dateInString, Double amount) {
-        String amountString = String.valueOf(amount);
-        return "Closing Balance as of " + getLastDateOfMonth(dateInString) + " BDT " + convertToCurrencyFormat(amountString) + " (" + translateNumberToWord(amountString).trim() + ")";
-    }
-
     public static String generateBalanceInWord(String amountString) {
         return translateNumberToWord(amountString).trim();
     }

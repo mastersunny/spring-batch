@@ -80,25 +80,27 @@
 </head>
 <body>
 <div class="container">
-    <p><b>Attachment:</b> National Credit and Commerce Bank Limited</p>
+    <p><b>Information:</b> Company Funding Records</p>
 
     <table>
         <thead>
         <tr>
-            <th>SL No.</th>
-            <th>Ref. No.</th>
-            <th>Bank Account Name</th>
-            <th>Bank Account Number</th>
-            <th>Amount in Taka</th>
+            <th>Company</th>
+            <th>Category</th>
+            <th>City</th>
+            <th>Funded Date</th>
+            <th>Raised Amount</th>
+            <th>Funding Type</th>
         </tr>
         </thead>
         <tbody>
-        <tr th:each="report : ${reports}">
-            <td th:text="${report.id}"></td>
-            <td th:text="${report.id}"></td>
-            <td th:text="${report.accountName}"></td>
-            <td th:text="${report.accountNo}"></td>
-            <td th:text="${report.refundAmount}"></td>
+        <tr th:each="record : ${records}">
+            <td th:text="${record.company}"></td>
+            <td th:text="${record.category}"></td>
+            <td th:text="${record.city}"></td>
+            <td th:text="${record.fundedDate}"></td>
+            <td th:text="${record.raisedAmount}"></td>
+            <td th:text="${record.round}"></td>
         </tr>
         </tbody>
         <tfoot>
@@ -114,15 +116,8 @@
     <div class="footer">
         <div class="d-flex">
             <div class="col w-68">
-                <div>Adnan Mehdi</div>
-                <div>Head of Treasury</div>
-                <div>bKash Ltd.</div>
-
             </div>
             <div class="col w-28">
-                <div>Moinuddin Mohammed Rahgir</div>
-                <div>Chief Financial Officer</div>
-                <div>bKash Ltd.</div>
             </div>
         </div>
         <p class="text-center">Page 1 of 1</p>
